@@ -160,6 +160,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         loadReverseGeoInformation(locationLatLngEntity)
     }
 
+
+
+    private fun removeLocationListener() {
+        if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
+            locationManager.removeUpdates(myLocationListener)
+        }
+    }
+
     // 현재 위치를 받아오고 이를 지도 상에 찍음
     private fun loadReverseGeoInformation(locationLatLngEntity: LocationLatLngEntity) {
         launch(coroutineContext) {
@@ -186,12 +194,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
             } catch (e: Exception) {
 
             }
-        }
-    }
-
-    private fun removeLocationListener() {
-        if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
-            locationManager.removeUpdates(myLocationListener)
         }
     }
 
