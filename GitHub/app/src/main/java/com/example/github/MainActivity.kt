@@ -14,6 +14,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    private val authTokenProvider by lazy {
+        AuthTokenProvider(this)
+    }
+
     val job: Job = Job()
 
     override val coroutineContext: CoroutineContext
@@ -51,11 +55,23 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         // todo getAccessToken
         intent?.data?.getQueryParameter("code")?.let {
             launch(coroutineContext) {
-                getAccessToken(it)
+                val getAccessTokenJob = getAccessToken(it)
             }
         }
     }
 
     private suspend fun getAccessToken(code: String) = withContext(Dispatchers.IO) {
+        val response = RetrofitUtil.authApiService.getAccessToken(
+            clientId = Key.GITHUB_CLIENT_ID,
+            clientSecret = Key.GITHUB_CLIENT_SECRET,
+            code = code
+        )
+
+        if (response.isSuccessful) {
+            val accessToken = response.body()?.accessToken ?: ""
+            if (accessToken.isNotEmpty()) {
+                authTokenProvider.updateToken(accessToken)
+            }
+        }
     }
 }
