@@ -4,7 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.view.isGone
 import com.example.github.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -55,7 +57,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         // todo getAccessToken
         intent?.data?.getQueryParameter("code")?.let {
             launch(coroutineContext) {
-                val getAccessTokenJob = getAccessToken(it)
+                showProgress()
+                getAccessToken(it)
+                dismissProgress()
             }
         }
     }
@@ -72,6 +76,25 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             if (accessToken.isNotEmpty()) {
                 authTokenProvider.updateToken(accessToken)
             }
+        }
+    }
+
+    private suspend fun showProgress() = withContext(coroutineContext) {
+        with(binding) {
+            loginButton.isGone = true
+            progressBar.isGone = false
+            loadingTextView.isGone = false
+        }
+    }
+
+    private suspend fun dismissProgress() = withContext(coroutineContext) {
+        with(binding) {
+            loginButton.isGone = false
+            loginButton.isEnabled = false
+            progressBar.isGone = true
+            loadingTextView.isGone = true
+
+            Toast.makeText(this@MainActivity, "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 }
