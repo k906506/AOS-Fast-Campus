@@ -1,14 +1,15 @@
 package com.example.github
 
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.view.isGone
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.example.github.data.database.SimpleGithubDatabase
+import com.example.github.data.entity.GithubOwner
+import com.example.github.data.entity.GithubRepository
 import com.example.github.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
@@ -16,8 +17,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val authTokenProvider by lazy {
-        AuthTokenProvider(this)
+    private val db by lazy {
+        SimpleGithubDatabase.getInstance(applicationContext)
     }
 
     val job: Job = Job()
@@ -29,72 +30,45 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        launch {
+            addMockData()
+            val repository = loadGithubRepositories()
+            withContext(coroutineContext) {
+                Log.d("repository", repository.toString())
+            }
+        }
+
         initViews()
     }
 
     private fun initViews() = with(binding) {
-        loginButton.setOnClickListener {
-            loginGithub()
+        floatingActionButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, SearchActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    private fun loginGithub() {
-        val loginUrl = Uri.Builder().scheme("https").authority("github.com")
-            .appendPath("login")
-            .appendPath("oauth")
-            .appendPath("authorize")
-            .appendQueryParameter("client_id", Key.GITHUB_CLIENT_ID)
-            .build()
-
-        CustomTabsIntent.Builder().build().also {
-            it.launchUrl(this, loginUrl)
+    private suspend fun addMockData() = withContext(Dispatchers.IO) {
+        val mockData = (0..10).map {
+            GithubRepository(
+                name = "repo $it",
+                fullName = "name $it",
+                owner = GithubOwner(
+                    "login",
+                    "avatarUrl",
+                ),
+                description = null,
+                language = null,
+                updateAt = Date().toString(),
+                stargazersCount = it
+            )
         }
+
+        db?.githubDao()?.insertAll(mockData)
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        // todo getAccessToken
-        intent?.data?.getQueryParameter("code")?.let {
-            launch(coroutineContext) {
-                showProgress()
-                getAccessToken(it)
-                dismissProgress()
-            }
-        }
-    }
-
-    private suspend fun getAccessToken(code: String) = withContext(Dispatchers.IO) {
-        val response = RetrofitUtil.authApiService.getAccessToken(
-            clientId = Key.GITHUB_CLIENT_ID,
-            clientSecret = Key.GITHUB_CLIENT_SECRET,
-            code = code
-        )
-
-        if (response.isSuccessful) {
-            val accessToken = response.body()?.accessToken ?: ""
-            if (accessToken.isNotEmpty()) {
-                authTokenProvider.updateToken(accessToken)
-            }
-        }
-    }
-
-    private suspend fun showProgress() = withContext(coroutineContext) {
-        with(binding) {
-            loginButton.isGone = true
-            progressBar.isGone = false
-            loadingTextView.isGone = false
-        }
-    }
-
-    private suspend fun dismissProgress() = withContext(coroutineContext) {
-        with(binding) {
-            loginButton.isGone = false
-            loginButton.isEnabled = false
-            progressBar.isGone = true
-            loadingTextView.isGone = true
-
-            Toast.makeText(this@MainActivity, "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
-        }
+    private suspend fun loadGithubRepositories() = withContext(Dispatchers.IO) {
+        val histories = db?.githubDao()?.getHistory()
+        return@withContext histories
     }
 }
