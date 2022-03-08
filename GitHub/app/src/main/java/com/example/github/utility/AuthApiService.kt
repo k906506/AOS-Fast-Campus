@@ -1,5 +1,6 @@
-package com.example.github
+package com.example.github.utility
 
+import com.example.github.data.response.GithubAccessTokenResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
