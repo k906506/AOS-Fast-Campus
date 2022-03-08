@@ -15,9 +15,9 @@ class SearchActivity : AppCompatActivity(), CoroutineScope {
 
     private val adapter by lazy {
         RepositoryAdapter(itemClickListener = {
-            val intent = Intent(this, RepositoryActivity::class.java)
-            intent.putExtra(RepositoryActivity.REPOSITORY_NAME_KEY, it.name ?: "Repository 이름이 없습니다.")
-            intent.putExtra(RepositoryActivity.REPOSITORY_OWNER_KEY, it.owner.login ?: "Repository 소유자가 없습니다.")
+            val intent = Intent(this@SearchActivity, RepositoryActivity::class.java)
+            intent.putExtra(RepositoryActivity.REPOSITORY_NAME_KEY, it.name)
+            intent.putExtra(RepositoryActivity.REPOSITORY_OWNER_KEY, it.owner.login)
             startActivity(intent)
         })
     }
