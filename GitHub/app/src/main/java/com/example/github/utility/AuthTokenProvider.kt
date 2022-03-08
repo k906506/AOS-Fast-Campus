@@ -1,4 +1,4 @@
-package com.example.github
+package com.example.github.utility
 
 import android.content.Context
 import androidx.preference.PreferenceManager
