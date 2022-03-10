@@ -37,7 +37,7 @@
         app:layout_constraintStart_toEndOf="@id/ownerProfileImageView"
         app:layout_constraintBottom_toTopOf="@id/stargazersCountText"
         app:layout_constraintEnd_toStartOf="@id/likeButton"
-        android:maxLines="3"
+        android:maxLines="2"
         android:ellipsize="end"
         tools:text="soda1127/blahblah"
         app:layout_constraintVertical_chainStyle="packed"/>
