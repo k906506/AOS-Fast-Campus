@@ -121,10 +121,8 @@ class RepositoryActivity : AppCompatActivity(), CoroutineScope {
             withContext(Dispatchers.IO) {
                 if (isLike) {
                     db?.githubDao()?.deleteRepository(githubRepository.name)
-                    Log.d("kodohyeon", "delete")
                 } else {
                     db?.githubDao()?.insert(githubRepository)
-                    Log.d("kodohyeon", "insert")
                 }
                 withContext(Dispatchers.Main) {
                     setLikeImage(isLike.not())

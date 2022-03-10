@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 
 class AuthTokenProvider(private val context: Context) {
-
     fun setToken(token: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit()
             .putString(Key.KEY_AUTH_TOKEN, token)

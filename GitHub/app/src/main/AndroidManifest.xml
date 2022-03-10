@@ -14,9 +14,9 @@
         android:theme="@style/Theme.GitHub">
         <activity android:name=".RepositoryActivity" />
         <activity android:name=".SearchActivity" />
-        <activity android:name=".SignInActivity" />
+        <activity android:name=".MainActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".SignInActivity"
             android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
@@ -28,7 +28,6 @@
             <!--            암시적 인텐트-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 

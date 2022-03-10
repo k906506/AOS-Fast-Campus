@@ -56,47 +56,50 @@ class SignInActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun loginGithub() {
-//        val loginUrl = Uri.Builder().scheme("https").authority("github.com")
-//            .appendPath("login")
-//            .appendPath("oauth")
-//            .appendPath("authorize")
-//            .appendQueryParameter("client_id", Key.GITHUB_CLIENT_ID)
-//            .build()
-//
-//        CustomTabsIntent.Builder().build().also {
-//            it.launchUrl(this, loginUrl)
-//        }
-        startActivity(Intent(this@SignInActivity, MainActivity::class.java))
+        val loginUrl = Uri.Builder().scheme("https").authority("github.com")
+            .appendPath("login")
+            .appendPath("oauth")
+            .appendPath("authorize")
+            .appendQueryParameter("client_id", Key.GITHUB_CLIENT_ID)
+            .build()
+
+        CustomTabsIntent.Builder().build().also {
+            it.launchUrl(this, loginUrl)
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
 
-        // todo getAccessToken
         intent?.data?.getQueryParameter("code")?.let {
             launch(coroutineContext) {
                 showProgress()
-                getAccessToken(it)
+                val progressJob = getAccessToken(it)
+                progressJob.join()
                 dismissProgress()
             }
         }
     }
 
-    private suspend fun getAccessToken(code: String) = withContext(Dispatchers.IO) {
-        val response = RetrofitUtil.authApiService.getAccessToken(
-            clientId = Key.GITHUB_CLIENT_ID,
-            clientSecret = Key.GITHUB_CLIENT_SECRET,
-            code = code
-        )
+    private suspend fun getAccessToken(code: String) = launch(coroutineContext) {
+        try {
+            withContext(Dispatchers.IO) {
+                val response = RetrofitUtil.authApiService.getAccessToken(
+                    clientId = Key.GITHUB_CLIENT_ID,
+                    clientSecret = Key.GITHUB_CLIENT_SECRET,
+                    code = code
+                )
 
-        Log.d("repository", response.body().toString())
-
-        if (response.isSuccessful) {
-            val accessToken = response.body()?.accessToken ?: ""
-            Log.d("repository", accessToken)
-            if (accessToken.isNotEmpty()) {
-                authTokenProvider.setToken(accessToken)
+                if (response.isSuccessful) {
+                    val accessToken = response.body()?.accessToken ?: "login"
+                    if (accessToken.isNotEmpty()) {
+                        authTokenProvider.setToken(accessToken)
+                    }
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+
         }
     }
 
