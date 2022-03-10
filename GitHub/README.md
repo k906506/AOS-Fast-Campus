@@ -1,7 +1,7 @@
 
 # Android - GitHub Repository
 
-[##_Image|kage@cNuOKV/btrvCnkUjcl/uVWAckLpT9UhDkgda1hHZK/img.gif|CDM|1.3|{"originWidth":600,"originHeight":1184,"style":"alignCenter","width":200,"height":395,"filename":"ezgif.com-gif-maker (4).gif"}_##]
+[노션에서 확인하기](https://codekodo.notion.site/Android-GitHub-Repository-c3e74b5fc9854110b0493adf29a52898)
 
 # 키워드
 
@@ -19,7 +19,7 @@
 깃허브 API를 통해 사용자가 깃허브 계정을 로그인하면 `고유한 토큰` 을 부여받을 수 있도록 `암시적 인텐트` 를 선언해줬다. `액션` 과 `카테고리` 를 지정해주고 로그인에 성공한 경우 해당 액티비티로 돌아올 수 있도록 `외부 스킴` 을 설정해줬다.
 
 ```xml
-			<intent-filter>
+	<intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -28,7 +28,7 @@
                 <data
                     android:host="github-auth"
                     android:scheme="com.example.github" />
-            </intent-filter>
+	</intent-filter>
 
 ```
 
@@ -99,8 +99,6 @@ class AuthTokenProvider(private val context: Context) {
 }
 
 ```
-
-[##_Image|kage@ydx9G/btrvBk24L5g/89BRXccnrecXpZ06FruzK0/img.gif|CDM|1.3|{"originWidth":600,"originHeight":1184,"style":"alignCenter","width":200,"height":395,"filename":"ezgif.com-gif-maker (2).gif"}_##]
 
 로그인이 되어 있는 경우 로그인 화면을 자동으로 넘어가는 것을 볼 수 있다.
 
@@ -272,8 +270,6 @@ class RepositoryAdapter(val itemClickListener: (GithubRepository) -> Unit) :
 
 ```
 
-[##_Image|kage@b5mvWp/btrvE3Z3r92/Luc6IrUHAbJvAnwuOiKRt1/img.gif|CDM|1.3|{"originWidth":600,"originHeight":1184,"style":"alignCenter","width":200,"height":395,"filename":"ezgif.com-gif-maker (3).gif"}_##]
-
 ## 4. 좋아요한 레포지토리
 
 좋아요 기능은 `Room` 을 활용했다. 로직은 아래와 같다.
@@ -282,5 +278,3 @@ class RepositoryAdapter(val itemClickListener: (GithubRepository) -> Unit) :
 2.  해당 레포지토리가 존재하지 않는 경우 `좋아요(웃는 얼굴)` 을 표시하고 이미 존재하는 경우 `싫어요(우는 얼굴)` 을 표시한다.
 3.  좋아요를 클릭하면 `Room DB` 에 저장하며 해당 아이콘을 싫어요로 변경한다.
 4.  싫어요를 클릭하면 `Room DB` 에서 삭제하며 해당 아이콘을 좋아요로 변경한다.
-
-[##_Image|kage@cNuOKV/btrvCnkUjcl/uVWAckLpT9UhDkgda1hHZK/img.gif|CDM|1.3|{"originWidth":600,"originHeight":1184,"style":"alignCenter","width":200,"height":395,"filename":"ezgif.com-gif-maker (4).gif"}_##]
