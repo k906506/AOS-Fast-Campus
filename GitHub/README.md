@@ -1,7 +1,9 @@
 
 # Android - GitHub Repository
 
-[노션에서 확인하기](https://codekodo.notion.site/Android-GitHub-Repository-c3e74b5fc9854110b0493adf29a52898)
+<center>
+[<img src="https://images.velog.io/images/k906506/post/b12a988c-b67b-47c6-87b4-e7cc9e69b82c/ezgif.com-gif-maker%20(4).gif" height="395" width="200">]()
+</center>
 
 # 키워드
 
@@ -10,7 +12,7 @@
 3.  Room
 4.  SharedPreference
 
-# 개발 과정
+# 개발 과정 [(노션에서 확인하기)](https://codekodo.notion.site/Android-GitHub-Repository-c3e74b5fc9854110b0493adf29a52898)
 
 ## 1. 사용자 확인
 
