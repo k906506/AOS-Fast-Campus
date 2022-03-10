@@ -1,9 +1,12 @@
 package com.example.github
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import com.example.github.data.database.SimpleGithubDatabase
 import com.example.github.data.entity.GithubRepository
 import com.example.github.databinding.ActivityRepositoryBinding
 import kotlinx.coroutines.*
@@ -12,6 +15,10 @@ import kotlin.coroutines.CoroutineContext
 class RepositoryActivity : AppCompatActivity(), CoroutineScope {
     private val binding by lazy {
         ActivityRepositoryBinding.inflate(layoutInflater)
+    }
+
+    private val db by lazy {
+        SimpleGithubDatabase.getInstance(applicationContext)
     }
 
     lateinit var job: Job
@@ -37,6 +44,8 @@ class RepositoryActivity : AppCompatActivity(), CoroutineScope {
                 finish()
             }
         }
+
+        showProgress()
     }
 
     private suspend fun loadRepository(
@@ -44,6 +53,7 @@ class RepositoryActivity : AppCompatActivity(), CoroutineScope {
         repositoryName: String
     ): GithubRepository? = withContext(coroutineContext) {
         var repository: GithubRepository? = null
+
         withContext(Dispatchers.IO) {
             val response = RetrofitUtil.githubApiSearchService.getRepository(
                 ownerLogin = repositoryOwner,
@@ -63,6 +73,7 @@ class RepositoryActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun setData(githubRepository: GithubRepository) = with(binding) {
+        dismissProgress()
         ownerNameAndRepoNameTextView.text =
             "${githubRepository.owner.login}/${githubRepository.name}"
         stargazersCountText.text = githubRepository.stargazersCount.toString()
@@ -75,6 +86,62 @@ class RepositoryActivity : AppCompatActivity(), CoroutineScope {
         }
         descriptionTextView.text = githubRepository.description
         updateTimeTextView.text = githubRepository.updateAt
+
+        setLikeState(githubRepository)
+    }
+
+    private fun setLikeState(githubRepository: GithubRepository) = launch {
+        withContext(Dispatchers.IO) {
+            val repository = db?.githubDao()?.getRepository(githubRepository.name)
+            val isLiked = repository != null
+            withContext(Dispatchers.Main) {
+                setLikeImage(isLiked)
+                binding.likeButton.setOnClickListener {
+                    addLikeGithubRepository(githubRepository, isLiked)
+                }
+            }
+        }
+    }
+
+    private fun setLikeImage(isLiked: Boolean) = with(binding) {
+        likeButton.setImageDrawable(
+            ContextCompat.getDrawable(
+                this@RepositoryActivity,
+                if (isLiked) {
+                    R.drawable.ic_baseline_mood_bad_24
+                } else {
+                    R.drawable.ic_baseline_mood_24
+                }
+            )
+        )
+    }
+
+    private fun addLikeGithubRepository(githubRepository: GithubRepository, isLike: Boolean) =
+        launch {
+            withContext(Dispatchers.IO) {
+                if (isLike) {
+                    db?.githubDao()?.deleteRepository(githubRepository.name)
+                    Log.d("kodohyeon", "delete")
+                } else {
+                    db?.githubDao()?.insert(githubRepository)
+                    Log.d("kodohyeon", "insert")
+                }
+                withContext(Dispatchers.Main) {
+                    setLikeImage(isLike.not())
+                }
+            }
+        }
+
+    private fun showProgress() {
+        with(binding) {
+            progressBar.isGone = false
+        }
+    }
+
+    private  fun dismissProgress() {
+        with(binding) {
+            progressBar.isGone = true
+        }
     }
 
     companion object {

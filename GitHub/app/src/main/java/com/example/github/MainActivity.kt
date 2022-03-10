@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.github.data.database.SimpleGithubDatabase
 import com.example.github.data.entity.GithubOwner
 import com.example.github.data.entity.GithubRepository
@@ -21,6 +23,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         SimpleGithubDatabase.getInstance(applicationContext)
     }
 
+    private val adapter by lazy {
+        RepositoryAdapter(itemClickListener = {
+            val intent = Intent(this@MainActivity, RepositoryActivity::class.java)
+            intent.putExtra(RepositoryActivity.REPOSITORY_NAME_KEY, it.name)
+            intent.putExtra(RepositoryActivity.REPOSITORY_OWNER_KEY, it.owner.login)
+            startActivity(intent)
+        })
+    }
+
     val job: Job = Job()
 
     override val coroutineContext: CoroutineContext
@@ -29,14 +40,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        launch {
-            addMockData()
-            val repository = loadGithubRepositories()
-            withContext(coroutineContext) {
-                Log.d("repository", repository.toString())
-            }
-        }
 
         initViews()
     }
@@ -48,27 +51,32 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private suspend fun addMockData() = withContext(Dispatchers.IO) {
-        val mockData = (0..10).map {
-            GithubRepository(
-                name = "repo $it",
-                fullName = "name $it",
-                owner = GithubOwner(
-                    "login",
-                    "avatarUrl",
-                ),
-                description = null,
-                language = null,
-                updateAt = Date().toString(),
-                stargazersCount = it
-            )
+    override fun onResume() {
+        super.onResume()
+        launch(coroutineContext) {
+            loadLikedRepositoryList()
         }
-
-        db?.githubDao()?.insertAll(mockData)
     }
 
-    private suspend fun loadGithubRepositories() = withContext(Dispatchers.IO) {
-        val histories = db?.githubDao()?.getHistory()
-        return@withContext histories
+    private suspend fun loadLikedRepositoryList() = withContext(Dispatchers.IO) {
+        val repoList = db?.githubDao()?.getHistory()
+        withContext(Dispatchers.Main) {
+            setData(repoList!!)
+        }
+    }
+
+    private fun setData(githubRepositoryList: List<GithubRepository>) = with(binding) {
+        if (githubRepositoryList.isEmpty()) {
+            emptyResultTextView.isGone = false
+            recyclerView.isGone = true
+        } else {
+            emptyResultTextView.isGone = true
+
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+            adapter.submitList(githubRepositoryList)
+
+            recyclerView.isGone = false
+        }
     }
 }
