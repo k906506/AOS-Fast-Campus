@@ -1,9 +1,9 @@
 
 # Android - GitHub Repository
 
-<center>
-[<img src="https://images.velog.io/images/k906506/post/b12a988c-b67b-47c6-87b4-e7cc9e69b82c/ezgif.com-gif-maker%20(4).gif" height="395" width="200">]()
-</center>
+<p align="center">
+<img src="https://images.velog.io/images/k906506/post/b12a988c-b67b-47c6-87b4-e7cc9e69b82c/ezgif.com-gif-maker%20(4).gif" height="395" width="200">
+</p>
 
 # 키워드
 
