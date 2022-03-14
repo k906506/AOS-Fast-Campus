@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://images.velog.io/images/k906506/post/59dc32a9-7f1a-46ea-a6b5-9587f067243e/ezgif.com-gif-maker%20(6).gif" height="200px" width="395px">
+<img src="https://images.velog.io/images/k906506/post/59dc32a9-7f1a-46ea-a6b5-9587f067243e/ezgif.com-gif-maker%20(6).gif" height="395px" width="200px">
   </p>
 
 # 키워드
@@ -10,6 +10,8 @@
 4. Coroutine
 5. AppWidgetProvider
 6. Service Lifecycle
+
+# 개발 과정 [(노션에서 확인하기)](https://www.notion.so/codekodo/Android-Weather-1289c43f99fb4b9e8d6992a254d61813)
 
 ## 위치 정보 가져오기
 
@@ -280,7 +282,7 @@ interface AirKoreaApiService {
 ```
 
 <p align="center">
-<img src="https://images.velog.io/images/k906506/post/56347a18-02fa-49dc-b391-73a94ae9b2ee/ezgif.com-gif-maker%20(5).gif" height="200px" width="395px">
+<img src="https://images.velog.io/images/k906506/post/56347a18-02fa-49dc-b391-73a94ae9b2ee/ezgif.com-gif-maker%20(5).gif" height="395px" width="200px">
   </p>
   
 ## 디자인과 기능 추가
