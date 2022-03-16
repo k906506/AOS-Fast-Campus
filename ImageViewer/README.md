@@ -1,7 +1,7 @@
 # Android - ImageViewer
 
 <p align="center">
-  <img src="https://images.velog.io/images/k906506/post/0a821f7e-0792-4eda-92aa-03f54a01961c/ezgif.com-gif-maker%20(8).gif" height = "400px" width = "200px">
+  <img src="https://images.velog.io/images/k906506/post/2437309e-78e9-48a0-ba1c-ec6b5e18c69d/Screenshot_1647430876.png" height = "400px" width = "200px">
   </p>
 
 # 키워드
@@ -320,3 +320,59 @@ private fun fetchRandomPhotos(query: String? = null) = scope.launch {
 ## 5. 배경화면으로 지정
 
 `WallPaperManager` 를 사용하면 `비트맵` 이미지를 배경화면으로 지정하는 것이 가능하다.
+
+```kotlin
+private fun downloadPhoto(photoUrl: String?) {
+        photoUrl ?: return
+
+        Glide.with(this)
+            .asBitmap()
+            .load(photoUrl)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(
+                object : CustomTarget<Bitmap>(SIZE_ORIGINAL, SIZE_ORIGINAL) {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        saveBitmapToMediaStore(resource)
+
+
+                        val wallpaperManager = WallpaperManager.getInstance(this@MainActivity)
+                        val snackBar = Snackbar.make(binding.root, "다운로드 완료", Snackbar.LENGTH_SHORT)
+
+                        if (wallpaperManager.isWallpaperSupported && wallpaperManager.isSetWallpaperAllowed) {
+                            snackBar.setAction("배경화면으로 지정") {
+                                try {
+                                    wallpaperManager.setBitmap(resource)
+                                } catch (e: Exception) {
+                                    Snackbar.make(
+                                        binding.root,
+                                        "배경화면 변경에 실패하였습니다.",
+                                        Snackbar.LENGTH_SHORT
+                                    )
+                                }
+                            }
+                            snackBar.duration = Snackbar.LENGTH_INDEFINITE
+                        }
+                        snackBar.show()
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+
+                    override fun onLoadStarted(placeholder: Drawable?) {
+                        super.onLoadStarted(placeholder)
+
+                        Snackbar.make(binding.root, "다운로드 중...", Snackbar.LENGTH_INDEFINITE).show()
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        super.onLoadFailed(errorDrawable)
+
+                        Snackbar.make(binding.root, "다운로드 실패", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            )
+    }
+```
