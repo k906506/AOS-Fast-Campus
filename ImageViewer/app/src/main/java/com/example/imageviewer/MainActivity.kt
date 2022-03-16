@@ -1,26 +1,23 @@
 package com.example.imageviewer
 
 import android.Manifest
+import android.app.WallpaperManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.media.MediaActionSound
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
@@ -139,6 +136,26 @@ class MainActivity : AppCompatActivity() {
                         transition: Transition<in Bitmap>?
                     ) {
                         saveBitmapToMediaStore(resource)
+
+
+                        val wallpaperManager = WallpaperManager.getInstance(this@MainActivity)
+                        val snackBar = Snackbar.make(binding.root, "다운로드 완료", Snackbar.LENGTH_SHORT)
+
+                        if (wallpaperManager.isWallpaperSupported && wallpaperManager.isSetWallpaperAllowed) {
+                            snackBar.setAction("배경화면으로 지정") {
+                                try {
+                                    wallpaperManager.setBitmap(resource)
+                                } catch (e: Exception) {
+                                    Snackbar.make(
+                                        binding.root,
+                                        "배경화면 변경에 실패하였습니다.",
+                                        Snackbar.LENGTH_SHORT
+                                    )
+                                }
+                            }
+                            snackBar.duration = Snackbar.LENGTH_INDEFINITE
+                        }
+                        snackBar.show()
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {
@@ -195,8 +212,6 @@ class MainActivity : AppCompatActivity() {
             imageDetails.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(imageUri, imageDetails, null, null)
         }
-
-        Snackbar.make(binding.root, "다운로드 완료", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun requestWriteStoragePermission() {
