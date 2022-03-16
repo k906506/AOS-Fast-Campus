@@ -12,7 +12,7 @@
 4. Content Resolver
 5. Unsplash API
 
-# 개발 과정
+# 개발 과정 [(노션에서 확인하기)](https://codekodo.notion.site/Android-ImageViewer-d6c26d3d4f9f417ab3e58a10d3c740ab)
 
 ## 1. Unsplash API 와 연결
 
