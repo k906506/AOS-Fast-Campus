@@ -11,9 +11,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.imageviewer.data.models.PhotoResponse
 import com.example.imageviewer.databinding.ItemPhotoBinding
 
-class PhotoAdapter : ListAdapter<PhotoResponse, PhotoAdapter.ViewHolder>(diffUtil) {
+class PhotoAdapter(val itemClickListener : (PhotoResponse) -> Unit) : ListAdapter<PhotoResponse, PhotoAdapter.ViewHolder>(diffUtil) {
     inner class ViewHolder(private val binding: ItemPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bindViews(photo: PhotoResponse) {
             val dimensionRatio = photo?.height!! / photo?.width?.toFloat()!!
             val targetWidth =
@@ -52,6 +53,10 @@ class PhotoAdapter : ListAdapter<PhotoResponse, PhotoAdapter.ViewHolder>(diffUti
             } else {
                 binding.descriptionTextView.isGone = false
                 binding.descriptionTextView.text = photo.description
+            }
+
+            binding.root.setOnClickListener {
+                itemClickListener(photo)
             }
         }
     }
