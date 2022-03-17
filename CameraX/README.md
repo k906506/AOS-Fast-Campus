@@ -1,4 +1,4 @@
-<p align = "center>
+<p align = "center">
    <img src="https://images.velog.io/images/k906506/post/6b65bb91-3f71-41ef-bb82-3300a321c2ef/Screenshot_20220317-222825_CameraX.jpg" height = "395px" width = "200px"/>
    <img src="https://images.velog.io/images/k906506/post/06aceff4-f120-4922-a7eb-dc786b6023fc/Screenshot_20220317-222828_CameraX.jpg" height = "395px" width = "200px"/>
 </p>
