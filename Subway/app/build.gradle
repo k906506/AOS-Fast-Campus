@@ -37,8 +37,6 @@ android {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
-
     implementation 'org.koin:koin-core:2.2.2'
     implementation 'org.koin:koin-android-scope:2.2.2'
     implementation 'org.koin:koin-android-ext:2.2.2'
@@ -49,7 +47,7 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:29.2.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
     // Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
